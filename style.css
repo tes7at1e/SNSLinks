@@ -1,0 +1,434 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+/* ===== スケール調整用 ===== */
+:root {
+    --ui-scale: 1.35; /* ← ここを 1.2 / 1.5 に変えるだけで全体調整 */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: black;
+    overflow: auto;
+    font-family: 'Orbitron', sans-serif;
+    color: white;
+}
+
+canvas {
+    position: fixed;
+    inset: 0;
+}
+
+/* ===== 音ゲーUIフレーム ===== */
+.frame {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.frame::before {
+    content: "";
+    position: absolute;
+    width: calc(520px * var(--ui-scale));
+    height: calc(520px * var(--ui-scale));
+    border: 2px solid rgba(255,255,255,0.3);
+    clip-path: polygon(
+        25% 0%, 75% 0%,
+        100% 25%, 100% 75%,
+        75% 100%, 25% 100%,
+        0% 75%, 0% 25%
+    );
+    box-shadow:
+        0 0 35px rgba(0,255,255,0.6),
+        inset 0 0 30px rgba(255,0,255,0.4);
+    animation: pulse 3s infinite alternate;
+}
+
+@keyframes pulse {
+    from { opacity: 0.55; }
+    to   { opacity: 1; }
+}
+
+/* ===== プロフィール ===== */
+.profile {
+    text-align: center;
+    z-index: 2;
+    transform: scale(var(--ui-scale));
+}
+
+.icon {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 35px cyan;
+}
+
+.name {
+    margin-top: 18px;
+    font-size: 2.6rem;
+    letter-spacing: 4px;
+    text-shadow: 0 0 22px rgba(255,255,255,0.9);
+}
+
+/* ===== 縦SNS ===== */
+.sns-vertical {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sns-vertical a {
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    font-size: 1.3rem;
+    letter-spacing: 2.5px;
+    position: relative;
+    transition: 0.3s;
+}
+
+/* 左ライン（音ゲーUI感） */
+.sns-vertical a::before {
+    content: "";
+    position: absolute;
+    left: -22px;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    background: rgba(255,255,255,0.4);
+    transform: translateY(-50%);
+}
+
+/* ホバー演出 */
+.sns-vertical a:hover {
+    color: cyan;
+    text-shadow: 0 0 14px cyan;
+}
+
+.sns-vertical a:hover::before {
+    background: cyan;
+    box-shadow: 0 0 10px cyan;
+}
+
+/* ===== Mobile / Responsive ===== */
+:root{
+  /* PCは既に --ui-scale を使ってるので、スマホは別で上書きする */
+  --ui-scale: 1.35;
+}
+
+/* 画面が狭い時はスケールを落として "収まる" ようにする */
+@media (max-width: 480px) {
+  :root{
+    --ui-scale: 1.05; /* ← 好みで 1.0〜1.15 */
+  }
+
+  body{
+    overflow: hidden;
+  }
+
+  /* ノッチ・ホームバー領域を避ける */
+  .frame{
+    padding:
+      calc(16px + env(safe-area-inset-top))
+      calc(16px + env(safe-area-inset-right))
+      calc(22px + env(safe-area-inset-bottom))
+      calc(16px + env(safe-area-inset-left));
+  }
+
+  /* フレームは "画面に収まる最大" を基準に */
+  .frame::before{
+    width: min(86vmin, 520px);
+    height: min(86vmin, 520px);
+  }
+
+  /* プロフィールはscaleで拡大縮小してるので、スマホは控えめに */
+  .profile{
+    transform: scale(1); /* ← ここはあえて固定。必要なら消してOK */
+  }
+
+  /* アイコン・文字をスマホに合わせて可変に */
+  .icon{
+    width: clamp(92px, 22vmin, 140px);
+    height: clamp(92px, 22vmin, 140px);
+    box-shadow: 0 0 24px cyan;
+  }
+
+  .name{
+    margin-top: 14px;
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    letter-spacing: 2px;
+  }
+
+  /* 縦SNS：タップしやすいボタン化 */
+  .sns-vertical{
+    margin-top: 22px;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .sns-vertical a{
+    width: min(76vw, 320px);
+    text-align: center;
+    font-size: clamp(1.0rem, 4vw, 1.2rem);
+    letter-spacing: 1.5px;
+
+    padding: 12px 14px;          /* タップ領域 */
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);  /* 対応ブラウザのみ */
+  }
+
+  /* 左ラインはスマホだとズレやすいので消す or 中央寄せに合わせる */
+  .sns-vertical a::before{
+    display: none;
+  }
+}
+
+/* もう少し広いスマホ〜タブレット */
+@media (min-width: 481px) and (max-width: 820px) {
+  :root{ --ui-scale: 1.15; }
+
+  .frame::before{
+    width: min(72vmin, 600px);
+    height: min(72vmin, 600px);
+  }
+
+  .icon{
+    width: clamp(110px, 18vmin, 150px);
+    height: clamp(110px, 18vmin, 150px);
+  }
+
+  .name{
+    font-size: clamp(1.9rem, 4vw, 2.4rem);
+  }
+}
+
+/* ===== Player List Page ===== */
+.player-card{
+  margin-top: 22px;
+  padding: 18px 20px;
+  width: min(520px, 78vw);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 18px rgba(0,255,255,0.15);
+}
+
+.player-hint{
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  opacity: 0.75;
+  margin-bottom: 12px;
+}
+
+.player-list{
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.player-list li{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.25);
+}
+
+.tag{
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.9);
+}
+
+/* hover */
+.player-list li:hover{
+  border-color: rgba(0,255,255,0.35);
+  box-shadow: 0 0 14px rgba(0,255,255,0.18);
+}
+
+/* mobile 微調整 */
+@media (max-width: 480px){
+  .player-card{
+    width: min(92vw, 520px);
+    padding: 14px 14px;
+  }
+}
+
+/* ===== Auto Numbered Player List ===== */
+.player-list.numbered{
+  counter-reset: player;
+}
+
+.player-list.numbered li{
+  counter-increment: player;
+  position: relative;
+  padding-left: 60px; /* 番号分の余白 */
+}
+
+/* 01. / 02. を自動生成 */
+.player-list.numbered li::before{
+  content: counter(player, decimal-leading-zero) ".";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.9);
+}
+
+/* ===== About Page ===== */
+.about-card{
+  margin-top: 20px;
+  padding: 20px 22px;
+  width: min(560px, 80vw);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 22px rgba(0,255,255,0.18);
+  text-align: left;
+}
+
+.about-section{
+  margin-bottom: 18px;
+}
+
+.about-section h2{
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  color: cyan;
+  text-shadow: 0 0 8px rgba(0,255,255,0.8);
+}
+
+.about-section p{
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* ===== Like List ===== */
+.like-list{
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.like-list li{
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* リンク共通 */
+.like-list a{
+  color: rgba(255,255,255,0.95);
+  text-decoration: none;
+  position: relative;
+  transition: 0.25s;
+}
+
+/* 下線をネオンラインで表現 */
+.like-list a::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: rgba(0,255,255,0.7);
+  box-shadow: 0 0 6px rgba(0,255,255,0.8);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s;
+}
+
+/* hover / tap */
+.like-list a:hover{
+  color: cyan;
+  text-shadow: 0 0 8px cyan;
+}
+
+.like-list a:hover::after{
+  transform: scaleX(1);
+}
+
+/* mobile */
+@media (max-width: 480px){
+  .about-card{
+    width: 92vw;
+    padding: 16px;
+  }
+
+  .about-section h2{
+    font-size: 1rem;
+  }
+
+  .about-section p{
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px){
+  .like-list li{
+    padding: 12px 14px; /* タップ領域を広げる */
+  }
+}
+
+/* ===== Secret Discord Link ===== */
+.secret-link{
+  display: inline-block;
+  margin-top: 8px;
+  color: cyan;
+  text-decoration: none;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(0,255,255,0.8);
+  transition: 0.3s;
+}
+
+.secret-link::after{
+  content: " ↗";
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.secret-link:hover{
+  color: magenta;
+  text-shadow: 0 0 12px magenta;
+}
+
+.delayed{
+  opacity: 0;
+  animation: fadeIn 1.5s ease forwards;
+  animation-delay: 1.2s;
+}
+
+@keyframes fadeIn{
+  to { opacity: 1; }
+}
+
