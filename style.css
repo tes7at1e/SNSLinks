@@ -18,7 +18,7 @@ html, body {
 body {
     margin: 0;
     overflow: hidden;
-
+    font-family: 'Orbitron', sans-serif;
     /* 背景画像（正方形でも全体表示） */
     background-color: #000;                 /* 余白は黒 */
     background-image: url("bg-square.png"); /* ←あなたの画像に変更 */
@@ -463,4 +463,5 @@ canvas {
   transform: none;
   cursor: default;
 }
+
 
